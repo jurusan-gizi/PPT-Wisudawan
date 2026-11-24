@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PPT Wisudawan · Jurusan Gizi</title>
+<meta name="theme-color" content="#007A6E">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="aset/ikon-192.png">
+<link rel="apple-touch-icon" href="aset/ikon-192.png">
+<style>
+:root{
+  --tosca:#00B8A5; --tua:#007A6E; --gelap:#0E3F3B; --lembut:#D4EEEA; --limau:#D7DF23;
+  --latar:#F3F8F7; --kartu:#fff; --teks:#16302D; --redup:#5E7471; --garis:#DCE8E6;
+  --merah:#C2410C; --kuning:#B7791F; --hijau:#15803D; --biru:#1D4ED8;
+  --r:14px; --bayang:0 1px 2px rgba(14,63,59,.06),0 4px 16px rgba(14,63,59,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--latar);color:var(--teks);
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.hidden{display:none!important}
+header.atas{position:sticky;top:0;z-index:20;background:var(--tua);color:#fff;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:12px}
+header.atas .judul{flex:1;min-width:0}
+header.atas b{display:block;font-size:16px}
+header.atas small{opacity:.85;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header.atas button{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.kartu{background:var(--kartu);border-radius:var(--r);box-shadow:var(--bayang);padding:16px;margin-bottom:16px}
+.kartu h2{font-size:16px;margin:0 0 12px;color:var(--gelap)}
+label.f{display:block;margin-bottom:12px}
+label.f>span{display:block;font-size:13px;font-weight:600;color:var(--gelap);margin-bottom:4px}
+label.f>em{display:block;font-size:12px;color:var(--redup);font-style:normal;margin-top:4px}
+input[type=text],input[type=date],input[type=password],input[type=search],select,textarea{
+  width:100%;padding:11px 12px;border:1px solid var(--garis);border-radius:10px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--tosca);box-shadow:0 0 0 3px rgba(0,184,165,.15)}
+input[readonly]{background:#F4F7F6;color:var(--redup)}
+textarea{resize:vertical;min-height:84px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;
+  padding:11px 16px;font-weight:600;cursor:pointer;background:var(--tua);color:#fff;text-decoration:none}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.dua{background:var(--lembut);color:var(--gelap)}
+.btn.limau{background:var(--limau);color:var(--gelap)}
+.btn.merah{background:#FDECE3;color:var(--merah)}
+.btn.kecil{padding:7px 11px;font-size:13px;border-radius:8px}
+.btn.lebar{width:100%}
+.baris{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.hitung{font-size:12px;color:var(--redup);text-align:right;margin-top:2px}
+.hitung.lebih{color:var(--merah);font-weight:700}
+
+/* Login */
+.login{max-width:420px;margin:6vh auto;padding:0 16px}
+.login .logo{text-align:center;margin-bottom:16px}
+.login .logo img{width:72px;height:72px;border-radius:18px;box-shadow:var(--bayang)}
+.login h1{font-size:20px;text-align:center;margin:10px 0 2px;color:var(--gelap)}
+.login p.sub{text-align:center;color:var(--redup);margin:0 0 18px}
+.tab{display:flex;background:var(--lembut);border-radius:12px;padding:4px;margin-bottom:14px}
+.tab button{flex:1;border:0;background:transparent;padding:9px;border-radius:9px;font-weight:600;color:var(--gelap);cursor:pointer}
+.tab button.aktif{background:#fff;box-shadow:var(--bayang)}
+
+/* Status */
+.lencana{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.s-belum{background:#EEF2F2;color:#5E7471}.s-draf{background:#FEF3C7;color:var(--kuning)}
+.s-dikirim{background:#DBEAFE;color:var(--biru)}.s-revisi{background:#FDECE3;color:var(--merah)}
+.s-setuju{background:#DCFCE7;color:var(--hijau)}
+.pita{border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:14px}
+.pita.info{background:#E6F6F4;color:var(--gelap)}
+.pita.warn{background:#FDECE3;color:#7C2D12}
+.pita.ok{background:#DCFCE7;color:#14532D}
+
+/* Pratinjau slide */
+.slide{position:relative;width:100%;aspect-ratio:16/9;background:#00B8A5 url(aset/latar-slide.jpg) center/cover no-repeat;
+  border-radius:10px;overflow:hidden;container-type:inline-size;box-shadow:var(--bayang)}
+.slide .el{position:absolute;display:flex;align-items:center;overflow:hidden;
+  font-family:Calibri,Carlito,"Segoe UI",system-ui,sans-serif;color:#0E3F3B;line-height:1.12}
+.slide .el span{display:block;width:100%}
+.slide .no{justify-content:center;font-weight:700}
+.slide .foto{background-size:cover;background-position:center}
+.slide .kosong{color:#9FB5B1;font-style:italic}
+
+/* Admin */
+.statistik{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+@media (max-width:760px){.statistik{grid-template-columns:repeat(3,1fr)}}
+.stat{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:var(--bayang);cursor:pointer;border:2px solid transparent}
+.stat.aktif{border-color:var(--tosca)}
+.stat b{display:block;font-size:22px;color:var(--gelap)}
+.stat small{color:var(--redup);font-size:12px}
+.progres{height:8px;background:var(--lembut);border-radius:99px;overflow:hidden;margin:12px 0 2px}
+.progres i{display:block;height:100%;background:linear-gradient(90deg,var(--tosca),var(--limau));width:0;transition:width .4s}
+.tabel{width:100%;border-collapse:collapse;font-size:14px}
+.tabel th{text-align:left;font-size:12px;color:var(--redup);font-weight:600;padding:8px;border-bottom:1px solid var(--garis)}
+.tabel td{padding:9px 8px;border-bottom:1px solid var(--garis);vertical-align:middle}
+.tabel tr:hover td{background:#F7FBFA}
+.tabel .nm{font-weight:600}
+.tabel .kecil{font-size:12px;color:var(--redup)}
+@media (max-width:640px){.tabel .sembunyi{display:none}}
+.chip{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;background:#FEF3C7;color:#92400E;margin-left:4px}
+.prodi-tab{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.prodi-tab button{border:1px solid var(--garis);background:#fff;border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:600;color:var(--gelap)}
+.prodi-tab button.aktif{background:var(--gelap);color:#fff;border-color:var(--gelap)}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(14,63,59,.55);display:flex;align-items:flex-end;justify-content:center}
+@media (min-width:700px){.modal{align-items:center}}
+.modal .isi{background:#fff;width:100%;max-width:860px;max-height:94vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}
+@media (min-width:700px){.modal .isi{border-radius:18px}}
+.modal .tutup{float:right;background:var(--lembut);border:0;border-radius:99px;width:34px;height:34px;font-size:18px;cursor:pointer}
+dl.data{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;margin:14px 0;font-size:14px}
+dl.data dt{color:var(--redup)}dl.data dd{margin:0;font-weight:500}
+
+/* Cropper */
+.potong{position:relative;width:min(300px,70vw);aspect-ratio:2/3;margin:0 auto;background:#222;border-radius:8px;overflow:hidden;touch-action:none;cursor:grab}
+.potong canvas{width:100%;height:100%;display:block}
+.potong .bingkai{position:absolute;inset:0;border:2px solid rgba(255,255,255,.85);pointer-events:none;
+  background:linear-gradient(transparent 33%,rgba(255,255,255,.25) 33%,rgba(255,255,255,.25) calc(33% + 1px),transparent calc(33% + 1px),transparent 66%,rgba(255,255,255,.25) 66%,rgba(255,255,255,.25) calc(66% + 1px),transparent calc(66% + 1px))}
+input[type=range]{width:100%;accent-color:var(--tua)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;
+  background:var(--gelap);color:#fff;padding:11px 16px;border-radius:12px;box-shadow:var(--bayang);max-width:90vw;font-size:14px}
+.putar{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:p .8s linear infinite}
+.btn.dua .putar{border-color:rgba(14,63,59,.25);border-top-color:var(--gelap)}
+@keyframes p{to{transform:rotate(360deg)}}
+.muat{display:flex;justify-content:center;padding:40px}
+.muat .putar{width:30px;height:30px;border-color:var(--lembut);border-top-color:var(--tua)}
+.kosong-info{text-align:center;color:var(--redup);padding:30px 10px}
+.foto-kecil{width:64px;aspect-ratio:2/3;border-radius:6px;background:var(--lembut) center/cover;flex:none}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="vLogin" class="login hidden">
+  <div class="logo"><img src="aset/ikon-192.png" alt=""></div>
+  <h1>PPT Wisudawan</h1>
+  <p class="sub">Jurusan Gizi · Poltekkes Kemenkes Makassar</p>
+  <div class="kartu">
+    <a id="lGizi" class="btn lebar" href="https://jurusan-gizi.github.io/">Masuk lewat Gizi-Link</a>
+    <p style="font-size:13px;color:var(--redup);margin:10px 0 0;text-align:center">Wisudawan, Kaprodi, dan admin prodi masuk lewat akun Gizi-Link, lalu buka menu <b>PPT Wisudawan</b>.</p>
+  </div>
+  <details class="kartu">
+    <summary style="cursor:pointer;font-weight:600;color:var(--gelap)">Wisudawan: masuk tanpa Gizi-Link</summary>
+    <form id="fMhs" style="margin-top:12px">
+      <label class="f"><span>NIM</span><input id="lNim" type="text" autocomplete="username" required></label>
+      <label class="f"><span>Tanggal lahir</span><input id="lTgl" type="date" required></label>
+      <button class="btn lebar" type="submit">Masuk</button>
+    </form>
+  </details>
+</section>
+
+<!-- ================= MAHASISWA ================= -->
+<section id="vMhs" class="hidden">
+  <header class="atas">
+    <div class="judul"><b>Data Slide Wisuda</b><small id="mInfo">…</small></div>
+    <button id="mKeluar" type="button">Keluar</button>
+  </header>
+  <main>
+    <div id="mPita"></div>
+    <div class="kartu">
+      <h2>Pratinjau slide Anda</h2>
+      <div id="mSlide" class="slide"></div>
+      <p class="kecil" style="font-size:12px;color:var(--redup);margin:8px 0 0">Tampilan ini sama dengan slide yang akan diputar saat wisuda. Nomor urut diatur admin.</p>
+    </div>
+
+    <form id="fData" class="kartu">
+      <h2>Data diri</h2>
+      <label class="f"><span>Nama lengkap</span><input id="dNama" type="text" readonly>
+        <em>Diambil dari data akademik. Bila ada salah ketik, tulis di kolom catatan.</em></label>
+      <div class="grid2">
+        <label class="f"><span>Program studi</span><input id="dProdi" type="text" readonly></label>
+        <label class="f"><span>IPK</span><input id="dIpk" type="text" readonly>
+          <em>Diisi admin, tidak bisa diubah.</em></label>
+      </div>
+      <div class="grid2">
+        <label class="f"><span>Tempat lahir</span><input id="dTempat" type="text" maxlength="40" required></label>
+        <label class="f"><span>Tanggal lahir</span><input id="dTgl" type="date" required></label>
+      </div>
+      <div id="dTtlAsli" class="pita info hidden" style="margin-top:-4px"></div>
+
+      <h2 style="margin-top:8px">Orang tua</h2>
+      <label class="f"><span>Nama ayah</span><input id="dAyah" type="text" maxlength="60" placeholder="Tulis lengkap beserta gelar bila ada"></label>
+      <label class="f"><span>Nama ibu</span><input id="dIbu" type="text" maxlength="60" placeholder="Tulis lengkap beserta gelar bila ada"></label>
+
+      <h2 style="margin-top:8px">Quote</h2>
+      <label class="f"><span>Kutipan atau pesan singkat</span>
+        <textarea id="dQuote" maxlength="150" placeholder="Contoh: Terima kasih Ayah, Ibu, dan para dosen yang telah membimbing hingga titik ini."></textarea>
+        <div id="dQuoteHit" class="hitung">0/150</div></label>
+
+      <h2 style="margin-top:8px">Foto 4×6</h2>
+      <div class="baris" style="align-items:flex-start">
+        <div id="dFotoKecil" class="foto-kecil"></div>
+        <div style="flex:1;min-width:180px">
+          <p style="margin:0 0 8px;font-size:13px;color:var(--redup)">Foto formal, wajah jelas, latar polos. Setelah memilih foto, geser dan perbesar sampai pas di bingkai.</p>
+          <label class="btn dua kecil" for="dFile">Pilih foto</label>
+          <input id="dFile" type="file" accept="image/*" class="hidden">
+        </div>
+      </div>
+
+      <h2 style="margin-top:16px">Catatan untuk admin <span style="font-weight:400;color:var(--redup)">(opsional)</span></h2>
+      <label class="f"><textarea id="dCatatan" maxlength="300" placeholder="Misal: ejaan nama saya seharusnya …, IPK saya seharusnya …"></textarea></label>
+
+      <div class="baris" style="margin-top:6px">
+        <button id="bDraf" class="btn dua" type="button">Simpan draf</button>
+        <button id="bKirim" class="btn" type="submit">Kirim ke admin prodi</button>
+      </div>
+    </form>
+  </main>
+</section>
+
+<!-- ================= ADMIN ================= -->
+<section id="vAdm" class="hidden">
+  <header class="atas">
+    <div class="judul"><b>PPT Wisudawan · Admin</b><small id="aInfo">…</small></div>
+    <button id="aMuat" type="button" title="Muat ulang">↻</button>
+    <button id="aKeluar" type="button">Keluar</button>
+  </header>
+  <main>
+    <div id="aProdiTab" class="prodi-tab"></div>
+    <div class="kartu">
+      <div id="aStat" class="statistik"></div>
+      <div class="progres"><i id="aBar"></i></div>
+      <small id="aBarTeks" style="color:var(--redup)"></small>
+    </div>
+
+    <div class="kartu">
+      <div class="baris" style="margin-bottom:10px">
+        <input id="aCari" type="search" placeholder="Cari nama atau NIM…" style="flex:1;min-width:200px">
+        <button id="aIngatkan" class="btn dua kecil" type="button">Kirim pengingat WA</button>
+      </div>
+      <div style="overflow-x:auto"><table class="tabel"><thead><tr>
+        <th>#</th><th>Nama</th><th class="sembunyi">Foto</th><th>Status</th><th class="sembunyi">Diperbarui</th><th></th>
+      </tr></thead><tbody id="aList"></tbody></table></div>
+    </div>
+
+    <div class="kartu">
+      <h2>Buat PPT</h2>
+      <div class="grid2">
+        <label class="f"><span>Program studi</span><select id="pProdi"></select></label>
+        <label class="f"><span>Urutan slide</span><select id="pUrut">
+          <option value="NIM">Menurut NIM</option>
+          <option value="ABJAD">Menurut abjad nama</option>
+          <option value="IPK">Menurut IPK (tertinggi dulu)</option>
+        </select></label>
+      </div>
+      <label class="f"><span>Wisudawan yang dimasukkan</span><select id="pIsi">
+        <option value="setuju">Hanya yang sudah Disetujui</option>
+        <option value="kirim">Disetujui + Dikirim (belum diperiksa)</option>
+        <option value="semua">Semua (termasuk yang belum lengkap)</option>
+      </select></label>
+      <div class="baris">
+        <button id="pBuat" class="btn limau" type="button">Buat &amp; unduh PPT</button>
+        <button id="pZip" class="btn dua" type="button">Unduh semua foto (ZIP)</button>
+      </div>
+      <p id="pProgres" style="font-size:13px;color:var(--redup);margin:10px 0 0"></p>
+    </div>
+
+    <div id="aSetel" class="kartu hidden">
+      <h2>Pengaturan pengisian (Ketua Jurusan)</h2>
+      <div class="grid2">
+        <label class="f"><span>Status pengisian</span><select id="sBuka"><option>Ya</option><option>Tidak</option></select>
+          <em>"Tidak" = mahasiswa hanya bisa melihat.</em></label>
+        <label class="f"><span>Batas pengisian</span><input id="sBatas" type="date"></label>
+      </div>
+      <button id="sSimpan" class="btn dua" type="button">Simpan pengaturan</button>
+    </div>
+  </main>
+</section>
+
+<div id="vMuat" class="muat"><div class="putar"></div></div>
+
+<!-- Modal detail (admin) -->
+<div id="mdDetail" class="modal hidden"><div class="isi">
+  <button class="tutup" type="button" data-tutup>×</button>
+  <h2 id="ddJudul" style="margin:4px 0 12px;font-size:17px;color:var(--gelap)"></h2>
+  <div id="ddSlide" class="slide"></div>
+  <dl id="ddData" class="data"></dl>
+  <label class="f"><span>Catatan untuk mahasiswa</span><textarea id="ddCatatan" maxlength="300" placeholder="Wajib diisi bila meminta revisi"></textarea></label>
+  <div class="baris">
+    <button id="ddSetuju" class="btn" type="button">Setujui &amp; kunci</button>
+    <button id="ddRevisi" class="btn merah" type="button">Minta revisi</button>
+    <button id="ddBuka" class="btn dua" type="button">Buka kunci</button>
+    <a id="ddWa" class="btn dua" target="_blank" rel="noopener">WA mahasiswa</a>
+  </div>
+</div></div>
+
+<!-- Modal potong foto -->
+<div id="mdPotong" class="modal hidden"><div class="isi" style="max-width:420px">
+  <button class="tutup" type="button" data-tutup>×</button>
+  <h2 style="margin:4px 0 12px;font-size:17px;color:var(--gelap)">Atur foto 4×6</h2>
+  <div class="potong" id="ptArea"><canvas id="ptKanvas" width="600" height="900"></canvas><div class="bingkai"></div></div>
+  <label class="f" style="margin-top:14px"><span>Perbesar</span><input id="ptZoom" type="range" min="1" max="4" step="0.01" value="1"></label>
+  <button id="ptPakai" class="btn lebar" type="button">Pakai foto ini</button>
+</div></div>
+
+<!-- Modal pengingat -->
+<div id="mdIngat" class="modal hidden"><div class="isi" style="max-width:560px">
+  <button class="tutup" type="button" data-tutup>×</button>
+  <h2 style="margin:4px 0 6px;font-size:17px;color:var(--gelap)">Pengingat WA</h2>
+  <p style="margin:0 0 12px;font-size:13px;color:var(--redup)">Mahasiswa yang belum mengirim data atau diminta revisi. Ketuk tombol WA untuk membuka percakapan dengan pesan siap kirim.</p>
+  <div id="igList"></div>
+</div></div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="jszip.min.js"></script>
+<script src="ppt-gen.js"></script>
+<script>
+/* ================== KONFIGURASI ================== */
+var CONFIG = {
+  API: 'https://script.google.com/macros/s/AKfycbwCfIoTqZERcnxNrKsAlN6QDs_jDhd_AkSrGf8DhHuXpuQKasA2LThieGiXhZSqtFavkA/exec',
+  GIZILINK: 'https://jurusan-gizi.github.io/',
+  LINK_APLIKASI: location.origin + location.pathname
+};
+var KODE_PRODI = { D3: 'D3 Gizi', D4: 'D4 Gizi dan Dietetika', PROF: 'Profesi Dietisien' };
+
+/* ================== UTIL ================== */
+var $ = function (id) { return document.getElementById(id); };
+var S = { token: null, peran: null, data: null, info: null, foto: '', fotoBaru: null, prodiAktif: 'SEMUA', filter: '', cache: {} };
+
+function simpanSesi(o) { try { localStorage.setItem('pptw_sesi', JSON.stringify(o)); } catch (e) {} }
+function bacaSesi() { try { return JSON.parse(localStorage.getItem('pptw_sesi') || 'null'); } catch (e) { return null; } }
+function hapusSesi() { try { localStorage.removeItem('pptw_sesi'); } catch (e) {} }
+
+function toast(m, lama) {
+  var t = $('toast'); t.textContent = m; t.classList.remove('hidden');
+  clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.add('hidden'); }, lama || 3200);
+}
+function tampil(v) {
+  ['vLogin', 'vMhs', 'vAdm', 'vMuat'].forEach(function (x) { $(x).classList.toggle('hidden', x !== v); });
+  window.scrollTo(0, 0);
+}
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function sibuk(btn, ya) {
+  if (!btn) return;
+  if (ya) { btn._isi = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="putar"></span>'; }
+  else { btn.disabled = false; if (btn._isi) btn.innerHTML = btn._isi; }
+}
+
+async function api(aksi, data, btn) {
+  sibuk(btn, true);
+  try {
+    var body = Object.assign({ aksi: aksi, token: S.token }, data || {});
+    var r = await fetch(CONFIG.API, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+    var j = await r.json();
+    if (!j.ok && j.login && aksi !== 'sesi') { hapusSesi(); S.token = null; tampil('vLogin'); toast(j.pesan, 6000); }
+    return j;
+  } catch (e) {
+    return { ok: false, pesan: 'Tidak dapat terhubung ke server. Periksa koneksi internet.' };
+  } finally { sibuk(btn, false); }
+}
+
+var BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function tglIndo(iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? (+m[3]) + ' ' + BULAN[+m[2] - 1] + ' ' + m[1] : ''; }
+function kelasStatus(s) {
+  return { 'Belum Mengisi': 's-belum', 'Draf': 's-draf', 'Dikirim': 's-dikirim', 'Perlu Revisi': 's-revisi', 'Disetujui': 's-setuju' }[s] || 's-belum';
+}
+function waNomor(hp) {
+  var n = String(hp || '').replace(/\D/g, '');
+  if (!n) return '';
+  if (n.indexOf('0') === 0) n = '62' + n.slice(1);
+  return n;
+}
+
+/* ================== PRATINJAU SLIDE ==================
+   Koordinat diambil langsung dari template.pptx (EMU) */
+var SW = 12192000, SHT = 6858000;
+var POS = {
+  nama:  [3063240, 1371600, 4663440, 868680, 24, true],
+  ttl:   [3063240, 2240280, 4663440, 731520, 24, false],
+  ipk:   [3063240, 2971800, 4663440, 731520, 24, true],
+  ayah:  [4023360, 3840480, 3703320, 411480, 24, false],
+  ibu:   [4023360, 4251960, 3703320, 411480, 24, false],
+  quote: [3063240, 4846320, 4663440, 1051560, 18, false],
+  no:    [8372426, 352475, 777240, 777240, 24, true],
+  foto:  [8643823, 1517904, 2852928, 4279392]
+};
+var PAS = { nama: [50, 18], ttl: [32, 18], ayah: [26, 14], ibu: [26, 14], quote: [130, 14] };
+
+function slideHTML(d, fotoUrl, no) {
+  function kotak(k, teks, ekstra) {
+    var p = POS[k], pt = p[4];
+    if (PAS[k] && teks) pt = Number(PPTWisuda.pas(teks, pt * 100, PAS[k][0], PAS[k][1] * 100)) / 100;
+    var gaya = 'left:' + (p[0] / SW * 100) + '%;top:' + (p[1] / SHT * 100) + '%;width:' + (p[2] / SW * 100) + '%;height:' + (p[3] / SHT * 100) + '%;' +
+      'font-size:' + (pt / 960 * 100) + 'cqw;' + (p[5] ? 'font-weight:700;' : '') + (k === 'quote' ? 'font-style:italic;' : '');
+    var isi = teks ? esc(teks) : '<span class="kosong">' + (ekstra || '') + '</span>';
+    return '<div class="el ' + (k === 'no' ? 'no' : '') + '" style="' + gaya + '"><span>' + isi + '</span></div>';
+  }
+  var f = POS.foto;
+  var foto = fotoUrl ? '<div class="el foto" style="left:' + (f[0] / SW * 100) + '%;top:' + (f[1] / SHT * 100) + '%;width:' + (f[2] / SW * 100) + '%;height:' + (f[3] / SHT * 100) + '%;background-image:url(' + fotoUrl + ')"></div>' : '';
+  return kotak('nama', d.nama) + kotak('ttl', d.ttl) + kotak('ipk', d.ipk) +
+    kotak('ayah', d.ayah, 'Nama ayah') + kotak('ibu', d.ibu, 'Nama ibu') +
+    kotak('quote', d.quote, 'Quote Anda tampil di sini') + kotak('no', no) + foto;
+}
+
+/* ================== LOGIN ================== */
+$('fMhs').onsubmit = async function (e) {
+  e.preventDefault();
+  var j = await api('loginMhs', { nim: $('lNim').value.trim(), tgl: $('lTgl').value }, this.querySelector('button'));
+  if (!j.ok) return toast(j.pesan, 5000);
+  masuk(j.token, 'mhs');
+};
+function masuk(token, peran) {
+  S.token = token; S.peran = peran; simpanSesi({ token: token, peran: peran });
+  peran === 'mhs' ? muatMhs() : muatAdm();
+}
+function keluar() { hapusSesi(); S.token = null; S.cache = {}; tampil('vLogin'); }
+$('mKeluar').onclick = keluar; $('aKeluar').onclick = keluar;
+
+/* ================== MAHASISWA ================== */
+async function muatMhs() {
+  tampil('vMuat');
+  var j = await api('dataSaya');
+  if (!j.ok) { toast(j.pesan, 5000); return tampil('vLogin'); }
+  S.data = j.profil; S.info = j.info;
+  var f = await api('fotoSaya');
+  S.foto = f.ok && f.foto ? 'data:image/jpeg;base64,' + f.foto : '';
+  isiFormMhs(); tampil('vMhs');
+}
+
+function isiFormMhs() {
+  var d = S.data, info = S.info;
+  $('mInfo').textContent = d.nama + ' · ' + d.nim;
+  $('dNama').value = d.nama; $('dProdi').value = KODE_PRODI[d.prodi] || d.prodi; $('dIpk').value = d.ipk || '–';
+  $('dTempat').value = d.tempat; $('dTgl').value = d.tgl;
+  $('dAyah').value = d.ayah; $('dIbu').value = d.ibu; $('dQuote').value = d.quote; $('dCatatan').value = d.catatanMhs;
+  $('dFotoKecil').style.backgroundImage = S.foto ? 'url(' + S.foto + ')' : '';
+
+  var kunci = d.status === 'Disetujui' || !!info.tutup;
+  Array.prototype.forEach.call($('fData').querySelectorAll('input:not([readonly]),textarea'), function (el) { el.disabled = kunci; });
+  $('bDraf').disabled = $('bKirim').disabled = kunci;
+  document.querySelector('label[for=dFile]').classList.toggle('hidden', kunci);
+
+  var pita = '<span class="lencana ' + kelasStatus(d.status) + '">' + esc(d.status) + '</span> ';
+  var kelas = 'info';
+  if (d.status === 'Disetujui') { kelas = 'ok'; pita += 'Data Anda sudah diperiksa dan dikunci. Sampai jumpa di wisuda! 🎓'; }
+  else if (d.status === 'Perlu Revisi') { kelas = 'warn'; pita += 'Admin meminta perbaikan: <b>' + esc(d.catatanAdmin || '-') + '</b>'; }
+  else if (d.status === 'Dikirim') pita += 'Data sudah terkirim dan menunggu pemeriksaan admin prodi. Masih bisa diubah sebelum disetujui.';
+  else pita += 'Lengkapi data dan foto, lalu tekan <b>Kirim ke admin prodi</b>.';
+  if (info.tutup && d.status !== 'Disetujui') { kelas = 'warn'; pita += '<br>' + esc(info.tutup); }
+  else if (info.batas) pita += '<br>Batas pengisian: <b>' + tglIndo(info.batas) + '</b>';
+  $('mPita').innerHTML = '<div class="pita ' + kelas + '">' + pita + '</div>';
+  perbaruiPratinjau();
+}
+
+function dataForm() {
+  return { tempat: $('dTempat').value.trim(), tgl: $('dTgl').value, ayah: $('dAyah').value.trim(), ibu: $('dIbu').value.trim(),
+           quote: $('dQuote').value.trim(), catatan: $('dCatatan').value.trim() };
+}
+function perbaruiPratinjau() {
+  var f = dataForm(), d = S.data;
+  var ttl = f.tempat + (f.tgl ? ', ' + tglIndo(f.tgl) : '');
+  $('mSlide').innerHTML = slideHTML({ nama: d.nama, ttl: ttl, ipk: d.ipk, ayah: f.ayah, ibu: f.ibu, quote: f.quote }, S.foto, '');
+  var n = $('dQuote').value.length; $('dQuoteHit').textContent = n + '/150'; $('dQuoteHit').classList.toggle('lebih', n >= 150);
+  var beda = ttl !== d.ttlAsli;
+  $('dTtlAsli').classList.toggle('hidden', !beda);
+  if (beda) $('dTtlAsli').innerHTML = 'Anda mengoreksi TTL. Data akademik: <b>' + esc(d.ttlAsli) + '</b>. Admin akan melihat koreksi ini.';
+}
+['dTempat', 'dTgl', 'dAyah', 'dIbu', 'dQuote'].forEach(function (id) { $(id).addEventListener('input', perbaruiPratinjau); });
+
+async function simpanMhs(kirim, btn) {
+  var f = dataForm(); f.kirim = kirim;
+  if (kirim && (!f.ayah || !f.ibu || !f.quote)) return toast('Nama ayah, nama ibu, dan quote wajib diisi.');
+  if (kirim && !S.foto) return toast('Unggah foto dulu sebelum mengirim.');
+  var j = await api('simpan', f, btn);
+  toast(j.pesan, 4000);
+  if (j.ok) { S.data.status = j.status; Object.assign(S.data, f, { catatanMhs: f.catatan }); isiFormMhs(); }
+}
+$('bDraf').onclick = function () { simpanMhs(false, this); };
+$('fData').onsubmit = function (e) { e.preventDefault(); simpanMhs(true, $('bKirim')); };
+
+/* ---------- Potong foto 2:3 ---------- */
+var PT = { img: null, zoom: 1, x: 0, y: 0 };
+$('dFile').onchange = function () {
+  var file = this.files[0]; this.value = '';
+  if (!file) return;
+  if (!/^image\//.test(file.type)) return toast('Pilih file gambar.');
+  var url = URL.createObjectURL(file), img = new Image();
+  img.onload = function () {
+    PT.img = img; PT.zoom = 1; $('ptZoom').value = 1; PT.x = 0; PT.y = 0;
+    $('mdPotong').classList.remove('hidden'); gambarPotong();
+  };
+  img.onerror = function () { toast('Gambar tidak bisa dibaca. Coba foto lain (JPG/PNG).'); };
+  img.src = url;
+};
+function gambarPotong() {
+  var c = $('ptKanvas'), g = c.getContext('2d'), im = PT.img;
+  var dasar = Math.max(c.width / im.width, c.height / im.height), s = dasar * PT.zoom;
+  var w = im.width * s, h = im.height * s;
+  var maxX = Math.max(0, (w - c.width) / 2), maxY = Math.max(0, (h - c.height) / 2);
+  PT.x = Math.min(maxX, Math.max(-maxX, PT.x)); PT.y = Math.min(maxY, Math.max(-maxY, PT.y));
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  g.drawImage(im, (c.width - w) / 2 + PT.x, (c.height - h) / 2 + PT.y, w, h);
+}
+$('ptZoom').oninput = function () { PT.zoom = Number(this.value); gambarPotong(); };
+(function () {
+  var area = $('ptArea'), seret = null;
+  area.addEventListener('pointerdown', function (e) { seret = { x: e.clientX, y: e.clientY }; area.setPointerCapture(e.pointerId); });
+  area.addEventListener('pointermove', function (e) {
+    if (!seret) return;
+    var k = $('ptKanvas').width / area.clientWidth;
+    PT.x += (e.clientX - seret.x) * k; PT.y += (e.clientY - seret.y) * k; seret = { x: e.clientX, y: e.clientY }; gambarPotong();
+  });
+  ['pointerup', 'pointercancel'].forEach(function (ev) { area.addEventListener(ev, function () { seret = null; }); });
+  area.addEventListener('wheel', function (e) {
+    e.preventDefault(); PT.zoom = Math.min(4, Math.max(1, PT.zoom - e.deltaY / 500)); $('ptZoom').value = PT.zoom; gambarPotong();
+  }, { passive: false });
+})();
+$('ptPakai').onclick = async function () {
+  var url = $('ptKanvas').toDataURL('image/jpeg', 0.86);
+  var j = await api('unggahFoto', { foto: url }, this);
+  if (!j.ok) return toast(j.pesan, 5000);
+  S.foto = url; S.data.adaFoto = true;
+  $('dFotoKecil').style.backgroundImage = 'url(' + url + ')';
+  $('mdPotong').classList.add('hidden'); perbaruiPratinjau(); toast('Foto tersimpan.');
+};
+
+/* ================== ADMIN ================== */
+async function muatAdm() {
+  tampil('vMuat');
+  var j = await api('daftar');
+  if (!j.ok) { toast(j.pesan, 5000); return tampil('vLogin'); }
+  S.data = j.daftar; S.info = j.info; S.saya = j.saya;
+  var kode = j.info.prodiSaya || ['D3', 'D4', 'PROF'];
+  if (kode.length === 1) S.prodiAktif = kode[0];
+  $('aInfo').textContent = (j.saya.nama || '') + ' · ' + kode.map(function (k) { return KODE_PRODI[k] || k; }).join(', ');
+  if (j.nimHilang && j.nimHilang.length) toast('Perhatian: ' + j.nimHilang.length + ' NIM di sheet Wisudawan tidak ada di master Gizi-Link (' + j.nimHilang.slice(0, 3).join(', ') + '…).', 8000);
+  $('pUrut').value = j.info.urutan || 'NIM';
+  // Pilihan prodi
+  $('pProdi').innerHTML = kode.map(function (k) { return '<option value="' + k + '">' + esc((j.info.prodi && j.info.prodi[k]) || KODE_PRODI[k] || k) + '</option>'; }).join('');
+  if (kode.length > 1) {
+    $('aProdiTab').innerHTML = ['SEMUA'].concat(kode).map(function (k) {
+      return '<button type="button" data-p="' + k + '" class="' + (S.prodiAktif === k ? 'aktif' : '') + '">' + (k === 'SEMUA' ? 'Semua' : esc(KODE_PRODI[k])) + '</button>';
+    }).join('');
+    $('aProdiTab').onclick = function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      S.prodiAktif = b.dataset.p; if (b.dataset.p !== 'SEMUA') $('pProdi').value = b.dataset.p;
+      muatAdmUlang();
+    };
+  }
+  $('aSetel').classList.toggle('hidden', j.saya.peran !== 'kajur');
+  $('sBuka').value = j.info.dibuka === 'Tidak' ? 'Tidak' : 'Ya'; $('sBatas').value = j.info.batas || '';
+  tampil('vAdm'); muatAdmUlang();
+}
+$('aMuat').onclick = muatAdm;
+
+function listProdi() { return S.data.filter(function (d) { return S.prodiAktif === 'SEMUA' || d.prodi === S.prodiAktif; }); }
+
+function muatAdmUlang() {
+  Array.prototype.forEach.call($('aProdiTab').children, function (b) { b.classList.toggle('aktif', b.dataset.p === S.prodiAktif); });
+  var L = listProdi(), hit = { 'Belum Mengisi': 0, 'Draf': 0, 'Dikirim': 0, 'Perlu Revisi': 0, 'Disetujui': 0 };
+  L.forEach(function (d) { hit[d.status] = (hit[d.status] || 0) + 1; });
+  var kartu = [['', 'Total', L.length]].concat(Object.keys(hit).map(function (k) { return [k, k, hit[k]]; }));
+  $('aStat').innerHTML = kartu.map(function (k) {
+    return '<div class="stat ' + (S.filter === k[0] ? 'aktif' : '') + '" data-f="' + k[0] + '"><b>' + k[2] + '</b><small>' + k[1] + '</small></div>';
+  }).join('');
+  var pct = L.length ? Math.round(hit['Disetujui'] / L.length * 100) : 0;
+  $('aBar').style.width = pct + '%';
+  $('aBarTeks').textContent = hit['Disetujui'] + ' dari ' + L.length + ' wisudawan disetujui (' + pct + '%)';
+  renderList();
+}
+$('aStat').onclick = function (e) { var s = e.target.closest('.stat'); if (!s) return; S.filter = s.dataset.f; muatAdmUlang(); };
+$('aCari').oninput = renderList;
+
+function renderList() {
+  var q = $('aCari').value.trim().toLowerCase();
+  var L = listProdi().filter(function (d) {
+    return (!S.filter || d.status === S.filter) && (!q || d.nama.toLowerCase().indexOf(q) >= 0 || d.nim.indexOf(q) >= 0);
+  }).sort(function (a, b) { return a.nim.localeCompare(b.nim); });
+  if (!L.length) { $('aList').innerHTML = '<tr><td colspan="6" class="kosong-info">Tidak ada data.</td></tr>'; return; }
+  $('aList').innerHTML = L.map(function (d, i) {
+    return '<tr><td class="kecil">' + (i + 1) + '</td>' +
+      '<td><div class="nm">' + esc(d.nama) + (d.ttlDikoreksi ? '<span class="chip">TTL dikoreksi</span>' : '') + (d.catatanMhs ? '<span class="chip">Ada catatan</span>' : '') + '</div>' +
+      '<div class="kecil">' + esc(d.nim) + ' · ' + esc(KODE_PRODI[d.prodi] || d.prodi) + '</div></td>' +
+      '<td class="sembunyi">' + (d.adaFoto ? '✅' : '—') + '</td>' +
+      '<td><span class="lencana ' + kelasStatus(d.status) + '">' + esc(d.status) + '</span></td>' +
+      '<td class="sembunyi kecil">' + esc(d.diperbarui) + '</td>' +
+      '<td><button class="btn dua kecil" type="button" data-nim="' + esc(d.nim) + '">Lihat</button></td></tr>';
+  }).join('');
+}
+$('aList').onclick = function (e) { var b = e.target.closest('button[data-nim]'); if (b) bukaDetail(b.dataset.nim); };
+
+async function ambilFoto(nim) {
+  if (S.cache[nim] !== undefined) return S.cache[nim];
+  var j = await api('foto', { nim: nim });
+  S.cache[nim] = j.ok && j.foto ? j.foto : '';
+  return S.cache[nim];
+}
+
+var DETAIL = null;
+async function bukaDetail(nim) {
+  var d = S.data.filter(function (x) { return x.nim === nim; })[0]; if (!d) return;
+  DETAIL = d;
+  $('ddJudul').textContent = d.nama;
+  $('ddSlide').innerHTML = slideHTML(d, '', '');
+  $('ddData').innerHTML =
+    '<dt>NIM</dt><dd>' + esc(d.nim) + '</dd>' +
+    '<dt>Prodi</dt><dd>' + esc(KODE_PRODI[d.prodi] || d.prodi) + '</dd>' +
+    '<dt>Status</dt><dd><span class="lencana ' + kelasStatus(d.status) + '">' + esc(d.status) + '</span>' + (d.diperiksa ? ' <span class="kecil">oleh ' + esc(d.diperiksa) + '</span>' : '') + '</dd>' +
+    '<dt>TTL</dt><dd>' + esc(d.ttl) + (d.ttlDikoreksi ? '<br><span class="chip">Dikoreksi</span> <small>Data akademik: ' + esc(d.ttlAsli) + '</small>' : '') + '</dd>' +
+    '<dt>Catatan mahasiswa</dt><dd>' + (d.catatanMhs ? esc(d.catatanMhs) : '–') + '</dd>' +
+    '<dt>No. HP</dt><dd>' + (d.noHp ? esc(d.noHp) : '–') + '</dd>';
+  $('ddCatatan').value = d.catatanAdmin || '';
+  var bisa = d.status !== 'Belum Mengisi';
+  $('ddSetuju').disabled = !bisa || d.status === 'Disetujui';
+  $('ddRevisi').disabled = !bisa;
+  $('ddBuka').classList.toggle('hidden', d.status !== 'Disetujui');
+  var wa = waNomor(d.noHp);
+  $('ddWa').classList.toggle('hidden', !wa);
+  if (wa) $('ddWa').href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent('Halo ' + d.nama + ', terkait data slide wisuda Anda: ');
+  $('mdDetail').classList.remove('hidden');
+  if (d.adaFoto) {
+    var f = await ambilFoto(d.nim);
+    if (DETAIL === d && f) $('ddSlide').innerHTML = slideHTML(d, 'data:image/jpeg;base64,' + f, '');
+  }
+}
+async function ubahStatus(status, btn) {
+  var cat = $('ddCatatan').value.trim();
+  if (status === 'Perlu Revisi' && !cat) return toast('Tulis catatan revisi untuk mahasiswa.');
+  var j = await api('setStatus', { nim: DETAIL.nim, status: status, catatan: status === 'Disetujui' ? '' : cat }, btn);
+  toast(j.pesan);
+  if (!j.ok) return;
+  DETAIL.status = status; DETAIL.catatanAdmin = status === 'Disetujui' ? '' : cat; DETAIL.diperiksa = S.saya.nama;
+  $('mdDetail').classList.add('hidden'); muatAdmUlang();
+  if (status === 'Perlu Revisi' && waNomor(DETAIL.noHp) && confirmWA()) {
+    window.open('https://wa.me/' + waNomor(DETAIL.noHp) + '?text=' + encodeURIComponent(
+      'Halo ' + DETAIL.nama + ', data slide wisuda Anda perlu diperbaiki: ' + cat + '\n\nSilakan buka: ' + CONFIG.LINK_APLIKASI), '_blank');
+  }
+}
+function confirmWA() { return window.confirm('Kirim catatan revisi ini lewat WhatsApp ke mahasiswa?'); }
+$('ddSetuju').onclick = function () { ubahStatus('Disetujui', this); };
+$('ddRevisi').onclick = function () { ubahStatus('Perlu Revisi', this); };
+$('ddBuka').onclick = function () { ubahStatus('Dikirim', this); };
+
+/* Pengingat WA */
+$('aIngatkan').onclick = function () {
+  var L = listProdi().filter(function (d) { return ['Belum Mengisi', 'Draf', 'Perlu Revisi'].indexOf(d.status) >= 0; });
+  $('igList').innerHTML = L.length ? L.map(function (d) {
+    var wa = waNomor(d.noHp);
+    var pesan = d.status === 'Perlu Revisi'
+      ? 'Halo ' + d.nama + ', data slide wisuda Anda perlu diperbaiki: ' + (d.catatanAdmin || '-') + '. Silakan buka ' + CONFIG.LINK_APLIKASI
+      : 'Halo ' + d.nama + ', mohon segera melengkapi data slide wisuda (nama orang tua, quote, dan foto 4x6) lewat Gizi-Link atau ' + CONFIG.LINK_APLIKASI +
+        (S.info.batas ? '. Batas pengisian: ' + tglIndo(S.info.batas) + '.' : '.') + ' Terima kasih.';
+    return '<div class="baris" style="justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--garis)">' +
+      '<div><b>' + esc(d.nama) + '</b><br><span class="lencana ' + kelasStatus(d.status) + '">' + esc(d.status) + '</span></div>' +
+      (wa ? '<a class="btn kecil" target="_blank" rel="noopener" href="https://wa.me/' + wa + '?text=' + encodeURIComponent(pesan) + '">WA</a>'
+          : '<small style="color:var(--redup)">No. HP kosong</small>') + '</div>';
+  }).join('') : '<p class="kosong-info">Semua wisudawan sudah mengirim data. 👍</p>';
+  $('mdIngat').classList.remove('hidden');
+};
+
+/* Pengaturan kajur */
+$('sSimpan').onclick = async function () {
+  var j = await api('pengaturan', { ubah: { DIBUKA: $('sBuka').value, BATAS_PENGISIAN: $('sBatas').value } }, this);
+  toast(j.pesan); if (j.ok) { S.info.dibuka = $('sBuka').value; S.info.batas = $('sBatas').value; }
+};
+
+/* ---------- Buat PPT ---------- */
+function pilihUntukPPT() {
+  var kode = $('pProdi').value, isi = $('pIsi').value, urut = $('pUrut').value;
+  var L = S.data.filter(function (d) {
+    if (d.prodi !== kode) return false;
+    if (isi === 'setuju') return d.status === 'Disetujui';
+    if (isi === 'kirim') return d.status === 'Disetujui' || d.status === 'Dikirim';
+    return true;
+  });
+  L.sort(function (a, b) {
+    if (urut === 'ABJAD') return a.nama.localeCompare(b.nama, 'id');
+    if (urut === 'IPK') return (parseFloat(String(b.ipk).replace(',', '.')) || 0) - (parseFloat(String(a.ipk).replace(',', '.')) || 0) || a.nama.localeCompare(b.nama, 'id');
+    return a.nim.localeCompare(b.nim);
+  });
+  return { kode: kode, L: L };
+}
+function b64ke(b) { var s = atob(b), u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+async function kumpulkanFoto(L, label) {
+  var hasil = [];
+  for (var i = 0; i < L.length; i++) {
+    $('pProgres').textContent = label + ' ' + (i + 1) + ' dari ' + L.length + '…';
+    hasil.push(L[i].adaFoto ? await ambilFoto(L[i].nim) : '');
+  }
+  return hasil;
+}
+function unduh(blob, nama) {
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nama;
+  document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+$('pBuat').onclick = async function () {
+  var p = pilihUntukPPT(), btn = this;
+  if (!p.L.length) return toast('Belum ada wisudawan yang memenuhi pilihan ini.');
+  var tanpaFoto = p.L.filter(function (d) { return !d.adaFoto; }).length;
+  if (tanpaFoto && !window.confirm(tanpaFoto + ' wisudawan belum punya foto (bingkai akan kosong). Lanjutkan?')) return;
+  sibuk(btn, true);
+  try {
+    var foto = await kumpulkanFoto(p.L, 'Mengambil foto');
+    $('pProgres').textContent = 'Menyusun PPT…';
+    var tpl = await (await fetch('template.pptx', { cache: 'no-cache' })).arrayBuffer();
+    var daftar = p.L.map(function (d, i) {
+      return { nama: d.nama, ttl: d.ttl, ipk: d.ipk, ayah: d.ayah, ibu: d.ibu, quote: d.quote, foto: foto[i] ? b64ke(foto[i]) : null };
+    });
+    var namaProdi = (S.info.prodi && S.info.prodi[p.kode]) || KODE_PRODI[p.kode];
+    var blob = await PPTWisuda.buatPPT(JSZip, tpl, { jurusan: S.info.jurusan || 'Gizi', prodi: namaProdi, tahun: S.info.tahun || '' }, daftar, 'blob');
+    unduh(blob, 'PPT_Wisudawan_' + (S.info.tahun || '') + '_' + namaProdi.replace(/\s+/g, '_') + '.pptx');
+    $('pProgres').textContent = 'Selesai: ' + p.L.length + ' wisudawan (' + (p.L.length + 2) + ' slide).';
+  } catch (e) {
+    $('pProgres').textContent = ''; toast('Gagal membuat PPT: ' + e.message, 6000);
+  } finally { sibuk(btn, false); }
+};
+$('pZip').onclick = async function () {
+  var p = pilihUntukPPT(), btn = this;
+  var L = p.L.filter(function (d) { return d.adaFoto; });
+  if (!L.length) return toast('Belum ada foto untuk pilihan ini.');
+  sibuk(btn, true);
+  try {
+    var foto = await kumpulkanFoto(L, 'Mengambil foto');
+    var z = new JSZip();
+    L.forEach(function (d, i) { if (foto[i]) z.file(d.nim + '_' + d.nama.replace(/[^\w\s.-]/g, '').replace(/\s+/g, '_') + '.jpg', foto[i], { base64: true }); });
+    unduh(await z.generateAsync({ type: 'blob' }), 'Foto_Wisudawan_' + p.kode + '.zip');
+    $('pProgres').textContent = 'Selesai: ' + L.length + ' foto.';
+  } catch (e) { toast('Gagal: ' + e.message); } finally { sibuk(btn, false); }
+};
+
+/* ================== MODAL & MULAI ================== */
+document.addEventListener('click', function (e) {
+  if (e.target.matches('[data-tutup]') || e.target.classList.contains('modal')) e.target.closest('.modal').classList.add('hidden');
+});
+
+/* Cari token Gizi-Link: dari alamat (?token=…/#token=…) atau penyimpanan
+   browser domain jurusan-gizi.github.io (dipakai bersama semua aplikasi Gizi-Link). */
+function payloadToken(t) {
+  if (!/^[A-Za-z0-9_-]+=*\.[A-Za-z0-9_-]+=*$/.test(t)) return null;
+  try {
+    var b = t.split('.')[0].replace(/-/g, '+').replace(/_/g, '/');
+    var p = JSON.parse(decodeURIComponent(escape(atob(b))));
+    return p && p.exp && Number(p.exp) > Date.now() && (p.nim || p.jenis === 'staf') ? p : null;
+  } catch (e) { return null; }
+}
+function cariTokenGiziLink() {
+  var calon = [];
+  function kumpul(v, d) {
+    if (d > 3 || v == null) return;
+    if (typeof v === 'string') {
+      calon.push(v.trim());
+      if (/^[\[{]/.test(v.trim())) { try { kumpul(JSON.parse(v), d + 1); } catch (e) {} }
+    } else if (typeof v === 'object') Object.keys(v).forEach(function (k) { kumpul(v[k], d + 1); });
+  }
+  var dariUrl = false;
+  try {
+    var q = new URLSearchParams(location.search.slice(1) + '&' + location.hash.slice(1));
+    q.forEach(function (v) { if (payloadToken(v)) { calon.push(v); dariUrl = true; } });
+  } catch (e) {}
+  [window.localStorage, window.sessionStorage].forEach(function (st) {
+    try { for (var i = 0; i < st.length; i++) { var k = st.key(i); if (k !== 'pptw_sesi') kumpul(st.getItem(k), 0); } } catch (e) {}
+  });
+  var terbaik = null, exp = 0;
+  calon.forEach(function (t) { var p = payloadToken(t); if (p && Number(p.exp) > exp) { terbaik = t; exp = Number(p.exp); } });
+  if (dariUrl) try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  return terbaik;
+}
+
+async function mulaiDenganToken(t) {
+  S.token = t;
+  var j = await api('sesi');
+  if (!j.ok) { toast(j.pesan, 7000); return false; }
+  masuk(t, j.peran === 'mhs' ? 'mhs' : 'admin');
+  return true;
+}
+
+(async function mulai() {
+  tampil('vMuat');
+  var sso = cariTokenGiziLink();
+  if (sso && await mulaiDenganToken(sso)) return;
+  var s = bacaSesi();
+  if (s && s.token && s.token !== sso && await mulaiDenganToken(s.token)) return;
+  hapusSesi(); S.token = null;
+  tampil('vLogin');
+})();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>
