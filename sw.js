@@ -1,6 +1,6 @@
 /* Service worker: simpan kerangka aplikasi agar cepat dibuka.
    Data (Apps Script) selalu diambil langsung dari internet. */
-const VERSI = 'pptw-v2';
+const VERSI = 'pptw-v3';
 const ASET = ['./', 'index.html', 'ppt-gen.js', 'jszip.min.js', 'template.pptx', 'manifest.json',
   'aset/latar-slide.jpg', 'aset/ikon-192.png', 'aset/ikon-512.png'];
 self.addEventListener('install', e => {
