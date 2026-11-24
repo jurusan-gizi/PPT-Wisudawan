@@ -438,7 +438,7 @@ function isiFormMhs() {
   if (d.status === 'Disetujui') { kelas = 'ok'; pita += 'Data Anda sudah diperiksa dan dikunci. Sampai jumpa di wisuda! 🎓'; }
   else if (d.status === 'Perlu Revisi') { kelas = 'warn'; pita += 'Admin meminta perbaikan: <b>' + esc(d.catatanAdmin || '-') + '</b>'; }
   else if (d.status === 'Dikirim') pita += 'Data sudah terkirim dan menunggu pemeriksaan admin prodi. Masih bisa diubah sebelum disetujui.';
-  else pita += 'Lengkapi data dan foto, lalu tekan <b>Kirim ke admin prodi</b>.';
+  else pita += '<b>Data Anda belum terkirim.</b> Lengkapi nama orang tua, quote, dan foto, lalu tekan <b>Kirim ke admin prodi</b>. Unggah foto saja belum cukup.';
   if (info.tutup && d.status !== 'Disetujui') { kelas = 'warn'; pita += '<br>' + esc(info.tutup); }
   else if (info.batas) pita += '<br>Batas pengisian: <b>' + tglIndo(info.batas) + '</b>';
   $('mPita').innerHTML = '<div class="pita ' + kelas + '">' + pita + '</div>';
@@ -458,7 +458,12 @@ function perbaruiPratinjau() {
   $('dTtlAsli').classList.toggle('hidden', !beda);
   if (beda) $('dTtlAsli').innerHTML = 'Anda mengoreksi TTL. Data akademik: <b>' + esc(d.ttlAsli) + '</b>. Admin akan melihat koreksi ini.';
 }
-['dTempat', 'dTgl', 'dAyah', 'dIbu', 'dQuote'].forEach(function (id) { $(id).addEventListener('input', perbaruiPratinjau); });
+['dTempat', 'dTgl', 'dAyah', 'dIbu', 'dQuote', 'dCatatan'].forEach(function (id) {
+  $(id).addEventListener('input', function () { S.berubah = true; perbaruiPratinjau(); });
+});
+window.addEventListener('beforeunload', function (e) {
+  if (S.peran === 'mhs' && S.berubah) { e.preventDefault(); e.returnValue = ''; }
+});
 
 async function simpanMhs(kirim, btn) {
   var f = dataForm(); f.kirim = kirim;
@@ -466,7 +471,7 @@ async function simpanMhs(kirim, btn) {
   if (kirim && !S.foto) return toast('Unggah foto dulu sebelum mengirim.');
   var j = await api('simpan', f, btn);
   toast(j.pesan, 4000);
-  if (j.ok) { S.data.status = j.status; Object.assign(S.data, f, { catatanMhs: f.catatan }); isiFormMhs(); }
+  if (j.ok) { S.data.status = j.status; Object.assign(S.data, f, { catatanMhs: f.catatan }); S.berubah = false; isiFormMhs(); }
 }
 $('bDraf').onclick = function () { simpanMhs(false, this); };
 $('fData').onsubmit = function (e) { e.preventDefault(); simpanMhs(true, $('bKirim')); };
@@ -514,7 +519,12 @@ $('ptPakai').onclick = async function () {
   if (!j.ok) return toast(j.pesan, 5000);
   S.foto = url; S.data.adaFoto = true;
   $('dFotoKecil').style.backgroundImage = 'url(' + url + ')';
-  $('mdPotong').classList.add('hidden'); perbaruiPratinjau(); toast('Foto tersimpan.');
+  $('mdPotong').classList.add('hidden'); perbaruiPratinjau();
+  // isian yang sudah diketik ikut disimpan sebagai draf
+  var f = dataForm(); f.kirim = false;
+  var s2 = await api('simpan', f);
+  if (s2.ok) { S.data.status = s2.status; Object.assign(S.data, f, { catatanMhs: f.catatan }); S.berubah = false; isiFormMhs(); }
+  toast('Foto tersimpan. Lengkapi data lalu tekan Kirim ke admin prodi.', 5000);
 };
 
 /* ================== ADMIN ================== */
@@ -604,7 +614,9 @@ async function bukaDetail(nim) {
     '<dt>No. HP</dt><dd>' + (d.noHp ? esc(d.noHp) : '–') + '</dd>';
   $('ddCatatan').value = d.catatanAdmin || '';
   var bisa = d.status !== 'Belum Mengisi';
-  $('ddSetuju').disabled = !bisa || d.status === 'Disetujui';
+  var lengkap = d.ayah && d.ibu && d.quote && d.adaFoto;
+  $('ddSetuju').disabled = d.status !== 'Dikirim' || !lengkap;
+  $('ddSetuju').title = d.status !== 'Dikirim' ? 'Bisa disetujui setelah mahasiswa menekan Kirim' : (!lengkap ? 'Data belum lengkap' : '');
   $('ddRevisi').disabled = !bisa;
   $('ddBuka').classList.toggle('hidden', d.status !== 'Disetujui');
   var wa = waNomor(d.noHp);
