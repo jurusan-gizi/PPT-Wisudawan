@@ -48,6 +48,7 @@ textarea{resize:vertical;min-height:84px}
 .baris{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.wajib{color:#DC2626;font-weight:800}
 .hitung{font-size:12px;color:var(--redup);text-align:right;margin-top:2px}
 .hitung.lebih{color:var(--merah);font-weight:700}
 
@@ -174,21 +175,21 @@ input[type=range]{width:100%;accent-color:var(--tua)}
           <em>Diisi admin, tidak bisa diubah.</em></label>
       </div>
       <div class="grid2">
-        <label class="f"><span>Tempat lahir</span><input id="dTempat" type="text" maxlength="40" required></label>
-        <label class="f"><span>Tanggal lahir</span><input id="dTgl" type="date" required></label>
+        <label class="f"><span>Tempat lahir <b class="wajib">*</b></span><input id="dTempat" type="text" maxlength="40" required></label>
+        <label class="f"><span>Tanggal lahir <b class="wajib">*</b></span><input id="dTgl" type="date" required></label>
       </div>
       <div id="dTtlAsli" class="pita info hidden" style="margin-top:-4px"></div>
 
       <h2 style="margin-top:8px">Orang tua</h2>
-      <label class="f"><span>Nama ayah</span><input id="dAyah" type="text" maxlength="60" placeholder="Tulis lengkap beserta gelar bila ada"></label>
-      <label class="f"><span>Nama ibu</span><input id="dIbu" type="text" maxlength="60" placeholder="Tulis lengkap beserta gelar bila ada"></label>
+      <label class="f"><span>Nama ayah <b class="wajib">*</b></span><input id="dAyah" type="text" maxlength="60" placeholder="Tulis lengkap beserta gelar bila ada"></label>
+      <label class="f"><span>Nama ibu <b class="wajib">*</b></span><input id="dIbu" type="text" maxlength="60" placeholder="Tulis lengkap beserta gelar bila ada"></label>
 
       <h2 style="margin-top:8px">Quote</h2>
-      <label class="f"><span>Kutipan atau pesan singkat</span>
+      <label class="f"><span>Kutipan atau pesan singkat <b class="wajib">*</b></span>
         <textarea id="dQuote" maxlength="150" placeholder="Contoh: Terima kasih Ayah, Ibu, dan para dosen yang telah membimbing hingga titik ini."></textarea>
         <div id="dQuoteHit" class="hitung">0/150</div></label>
 
-      <h2 style="margin-top:8px">Foto 4×6</h2>
+      <h2 style="margin-top:8px">Foto 4×6 <b class="wajib">*</b></h2>
       <div class="baris" style="align-items:flex-start">
         <div id="dFotoKecil" class="foto-kecil"></div>
         <div style="flex:1;min-width:180px">
@@ -202,6 +203,7 @@ input[type=range]{width:100%;accent-color:var(--tua)}
       <h2 style="margin-top:16px">Catatan untuk admin <span style="font-weight:400;color:var(--redup)">(opsional)</span></h2>
       <label class="f"><textarea id="dCatatan" maxlength="300" placeholder="Misal: ejaan nama saya seharusnya …, IPK saya seharusnya …"></textarea></label>
 
+      <p style="font-size:13px;color:var(--redup);margin:4px 0 10px"><b class="wajib">*</b> wajib diisi sebelum menekan <b>Kirim ke admin prodi</b>.</p>
       <div class="baris" style="margin-top:6px">
         <button id="bDraf" class="btn dua" type="button">Simpan draf</button>
         <button id="bKirim" class="btn" type="submit">Kirim ke admin prodi</button>
