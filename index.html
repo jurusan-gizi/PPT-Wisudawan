@@ -168,7 +168,7 @@ input[type=range]{width:100%;accent-color:var(--tua)}
     <form id="fData" class="kartu">
       <h2>Data diri</h2>
       <label class="f"><span>Nama lengkap</span><input id="dNama" type="text" readonly>
-        <em>Diambil dari data akademik. Bila ada salah ketik, tulis di kolom catatan.</em></label>
+        <em>Diambil dari data akademik. Di slide otomatis ditulis dengan huruf awal kapital dan gelar prodi. Bila ada salah ketik, tulis di kolom catatan.</em></label>
       <div class="grid2">
         <label class="f"><span>Program studi</span><input id="dProdi" type="text" readonly></label>
         <label class="f"><span>IPK</span><input id="dIpk" type="text" readonly>
@@ -317,6 +317,13 @@ var CONFIG = {
   LINK_APLIKASI: location.origin + location.pathname
 };
 var KODE_PRODI = { D3: 'D3 Gizi', D4: 'D4 Gizi dan Dietetika', PROF: 'Profesi Dietisien' };
+var GELAR_BAWAAN = { D3: 'A.Md.Gz.', D4: 'S.Tr.Gz.', PROF: 'Dietisien' };
+function gelarProdi(kode) { return ((S.info && S.info.gelar) || GELAR_BAWAAN)[kode] || GELAR_BAWAAN[kode] || ''; }
+/* Data siap tampil: nama + gelar, kapitalisasi rapi. Database tidak diubah. */
+function rapi(d) {
+  return { nama: PPTWisuda.denganGelar(d.nama, gelarProdi(d.prodi)), ttl: d.ttl, ipk: d.ipk,
+           ayah: PPTWisuda.rapikanNama(d.ayah), ibu: PPTWisuda.rapikanNama(d.ibu), quote: PPTWisuda.rapikanKalimat(d.quote) };
+}
 
 /* ================== UTIL ================== */
 var $ = function (id) { return document.getElementById(id); };
@@ -454,7 +461,7 @@ function dataForm() {
 function perbaruiPratinjau() {
   var f = dataForm(), d = S.data;
   var ttl = f.tempat + (f.tgl ? ', ' + tglIndo(f.tgl) : '');
-  $('mSlide').innerHTML = slideHTML({ nama: d.nama, ttl: ttl, ipk: d.ipk, ayah: f.ayah, ibu: f.ibu, quote: f.quote }, S.foto, '');
+  $('mSlide').innerHTML = slideHTML(rapi({ nama: d.nama, prodi: d.prodi, ttl: ttl, ipk: d.ipk, ayah: f.ayah, ibu: f.ibu, quote: f.quote }), S.foto, '');
   var n = $('dQuote').value.length; $('dQuoteHit').textContent = n + '/150'; $('dQuoteHit').classList.toggle('lebih', n >= 150);
   var beda = ttl !== d.ttlAsli;
   $('dTtlAsli').classList.toggle('hidden', !beda);
@@ -606,7 +613,7 @@ async function bukaDetail(nim) {
   var d = S.data.filter(function (x) { return x.nim === nim; })[0]; if (!d) return;
   DETAIL = d;
   $('ddJudul').textContent = d.nama;
-  $('ddSlide').innerHTML = slideHTML(d, '', '');
+  $('ddSlide').innerHTML = slideHTML(rapi(d), '', '');
   $('ddData').innerHTML =
     '<dt>NIM</dt><dd>' + esc(d.nim) + '</dd>' +
     '<dt>Prodi</dt><dd>' + esc(KODE_PRODI[d.prodi] || d.prodi) + '</dd>' +
@@ -627,7 +634,7 @@ async function bukaDetail(nim) {
   $('mdDetail').classList.remove('hidden');
   if (d.adaFoto) {
     var f = await ambilFoto(d.nim);
-    if (DETAIL === d && f) $('ddSlide').innerHTML = slideHTML(d, 'data:image/jpeg;base64,' + f, '');
+    if (DETAIL === d && f) $('ddSlide').innerHTML = slideHTML(rapi(d), 'data:image/jpeg;base64,' + f, '');
   }
 }
 async function ubahStatus(status, btn) {
@@ -711,7 +718,7 @@ $('pBuat').onclick = async function () {
     $('pProgres').textContent = 'Menyusun PPT…';
     var tpl = await (await fetch('template.pptx', { cache: 'no-cache' })).arrayBuffer();
     var daftar = p.L.map(function (d, i) {
-      return { nama: d.nama, ttl: d.ttl, ipk: d.ipk, ayah: d.ayah, ibu: d.ibu, quote: d.quote, foto: foto[i] ? b64ke(foto[i]) : null };
+      var r = rapi(d); r.foto = foto[i] ? b64ke(foto[i]) : null; return r;
     });
     var namaProdi = (S.info.prodi && S.info.prodi[p.kode]) || KODE_PRODI[p.kode];
     var blob = await PPTWisuda.buatPPT(JSZip, tpl, { jurusan: S.info.jurusan || 'Gizi', prodi: namaProdi, tahun: S.info.tahun || '' }, daftar, 'blob');

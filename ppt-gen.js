@@ -128,7 +128,48 @@
     });
   }
 
-  var api = { buatPPT: buatPPT, pas: pas };
+  /* ---------- Perapian teks (hanya untuk tampilan & PPT, database tidak diubah) ---------- */
+  // Singkatan gelar/sebutan yang ditulis tanpa titik dan harus tetap huruf besar
+  var TETAP = ['SE','SH','SP','ST','SKM','SST','SKG','SKEP','SPD','SAG','SPDI','SHI','SSI','SSIT','SGZ','SIP','SS','SM','SAK','SKOM','STP',
+               'MM','MH','MT','MSI','MKES','MPH','MSC','MA','MPD','MAG','MGZ','DCN','AMD','AMG','AMKEB','AMKEP','AMK','BA','BSC','PHD','DR','IR','DRS','DRA',
+               'II','III','IV','TNI','POLRI','ASN','PNS'];
+  function kapitalAwal(kata) {
+    if (!kata) return kata;
+    var huruf = kata.replace(/[^A-Za-z]/g, '');
+    if (huruf && TETAP.indexOf(huruf.toUpperCase()) >= 0 && kata.indexOf('.') < 0 && huruf === huruf.toUpperCase()) return kata;
+    // gelar bertitik (S.Pd, M.Kes, A.Md.Gz) dibiarkan bila sudah campuran huruf besar-kecil
+    if (/[A-Z]\.[A-Za-z]/.test(kata) && /[a-z]/.test(kata)) return kata;
+    return kata.toLowerCase().replace(/(^|[.\-(\/"“])([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
+  }
+  function rapikanNama(t) {
+    t = String(t || '').replace(/\s+/g, ' ').trim();
+    if (!t) return t;
+    // bagian setelah koma pertama biasanya gelar: hanya dirapikan bila ditulis kapital semua
+    var i = t.indexOf(','), inti = i >= 0 ? t.slice(0, i) : t, sisa = i >= 0 ? t.slice(i) : '';
+    inti = inti.split(' ').map(kapitalAwal).join(' ');
+    // gelar bertitik yang ditulis kapital semua (S.PD., M.KES) -> S.Pd., M.Kes
+    sisa = sisa.replace(/[A-Z][A-Z.]*\.[A-Z.]*/g, function (g) {
+      return /[a-z]/.test(g) ? g : g.split('.').map(function (x) { return x.length > 1 ? x.charAt(0) + x.slice(1).toLowerCase() : x; }).join('.');
+    });
+    return inti + sisa;
+  }
+  function rapikanKalimat(t) {
+    t = String(t || '').replace(/\s+/g, ' ').trim();
+    if (!t) return t;
+    var huruf = t.replace(/[^A-Za-z]/g, '');
+    if (huruf.length > 3 && huruf === huruf.toUpperCase()) t = t.toLowerCase();   // SEMUA KAPITAL -> kalimat biasa
+    // huruf pertama tiap kalimat dijadikan kapital
+    return t.replace(/(^|[.!?]\s+)([^A-Za-z]*)([a-z])/g, function (m, a, b, c) { return a + b + c.toUpperCase(); });
+  }
+  function denganGelar(nama, gelar) {
+    nama = rapikanNama(nama); gelar = String(gelar || '').trim();
+    if (!gelar) return nama;
+    var norm = function (x) { return String(x).toLowerCase().replace(/[^a-z]/g, ''); };
+    if (norm(nama).slice(-norm(gelar).length) === norm(gelar)) return nama;   // sudah bergelar
+    return nama.replace(/[,\s]+$/, '') + ', ' + gelar;
+  }
+
+  var api = { buatPPT: buatPPT, pas: pas, rapikanNama: rapikanNama, rapikanKalimat: rapikanKalimat, denganGelar: denganGelar };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PPTWisuda = api;
 })(this);
