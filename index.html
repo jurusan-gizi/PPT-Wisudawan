@@ -279,8 +279,27 @@ input[type=range]{width:100%;accent-color:var(--tua)}
   <h2 id="ddJudul" style="margin:4px 0 12px;font-size:17px;color:var(--gelap)"></h2>
   <div id="ddSlide" class="slide"></div>
   <dl id="ddData" class="data"></dl>
+  <div id="edPanel" class="hidden" style="background:#F3F8F7;border-radius:12px;padding:14px;margin-bottom:14px">
+    <h2 style="font-size:15px;margin:0 0 10px;color:var(--gelap)">Edit data slide (oleh admin)</h2>
+    <label class="f"><span>Nama di slide</span><input id="edNama" type="text" maxlength="100">
+      <em>Hanya untuk slide PPT; master Gizi-Link tidak berubah. Gelar prodi ditambahkan otomatis.</em></label>
+    <div class="grid2">
+      <label class="f"><span>Tempat lahir</span><input id="edTempat" type="text" maxlength="40"></label>
+      <label class="f"><span>Tanggal lahir</span><input id="edTgl" type="date"></label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>Nama ayah</span><input id="edAyah" type="text" maxlength="60"></label>
+      <label class="f"><span>Nama ibu</span><input id="edIbu" type="text" maxlength="60"></label>
+    </div>
+    <label class="f"><span>Quote</span><textarea id="edQuote" maxlength="150"></textarea><div id="edQuoteHit" class="hitung">0/150</div></label>
+    <div class="baris">
+      <button id="edSimpan" class="btn" type="button">Simpan perubahan</button>
+      <button id="edBatal" class="btn dua" type="button">Batal</button>
+    </div>
+  </div>
   <label class="f"><span>Catatan untuk mahasiswa</span><textarea id="ddCatatan" maxlength="300" placeholder="Wajib diisi bila meminta revisi"></textarea></label>
   <div class="baris">
+    <button id="ddEdit" class="btn dua" type="button">✏️ Edit data</button>
     <button id="ddSetuju" class="btn" type="button">Setujui &amp; kunci</button>
     <button id="ddRevisi" class="btn merah" type="button">Minta revisi</button>
     <button id="ddBuka" class="btn dua" type="button">Buka kunci</button>
@@ -321,7 +340,7 @@ var GELAR_BAWAAN = { D3: 'A.Md.Gz.', D4: 'S.Tr.Gz.', PROF: 'Dietisien' };
 function gelarProdi(kode) { return ((S.info && S.info.gelar) || GELAR_BAWAAN)[kode] || GELAR_BAWAAN[kode] || ''; }
 /* Data siap tampil: nama + gelar, kapitalisasi rapi. Database tidak diubah. */
 function rapi(d) {
-  return { nama: PPTWisuda.denganGelar(d.nama, gelarProdi(d.prodi)), ttl: d.ttl, ipk: d.ipk,
+  return { nama: PPTWisuda.denganGelar(d.namaSlide || d.nama, gelarProdi(d.prodi)), ttl: d.ttl, ipk: d.ipk,
            ayah: PPTWisuda.rapikanNama(d.ayah), ibu: PPTWisuda.rapikanNama(d.ibu), quote: PPTWisuda.rapikanKalimat(d.quote) };
 }
 
@@ -591,7 +610,7 @@ function renderList() {
   if (!L.length) { $('aList').innerHTML = '<tr><td colspan="6" class="kosong-info">Tidak ada data.</td></tr>'; return; }
   $('aList').innerHTML = L.map(function (d, i) {
     return '<tr><td class="kecil">' + (i + 1) + '</td>' +
-      '<td><div class="nm">' + esc(d.nama) + (d.ttlDikoreksi ? '<span class="chip">TTL dikoreksi</span>' : '') + (d.catatanMhs ? '<span class="chip">Ada catatan</span>' : '') + '</div>' +
+      '<td><div class="nm">' + esc(d.nama) + (d.ttlDikoreksi ? '<span class="chip">TTL dikoreksi</span>' : '') + (d.catatanMhs ? '<span class="chip">Ada catatan</span>' : '') + (d.namaSlide ? '<span class="chip" style="background:#DBEAFE;color:#1D4ED8">Nama dikoreksi</span>' : '') + '</div>' +
       '<div class="kecil">' + esc(d.nim) + ' · ' + esc(KODE_PRODI[d.prodi] || d.prodi) + '</div></td>' +
       '<td class="sembunyi">' + (d.adaFoto ? '✅' : '—') + '</td>' +
       '<td><span class="lencana ' + kelasStatus(d.status) + '">' + esc(d.status) + '</span></td>' +
@@ -608,11 +627,12 @@ async function ambilFoto(nim) {
   return S.cache[nim];
 }
 
-var DETAIL = null;
+var DETAIL = null, DETAIL_FOTO = '';
 async function bukaDetail(nim) {
   var d = S.data.filter(function (x) { return x.nim === nim; })[0]; if (!d) return;
-  DETAIL = d;
-  $('ddJudul').textContent = d.nama;
+  DETAIL = d; DETAIL_FOTO = '';
+  $('edPanel').classList.add('hidden');
+  $('ddJudul').textContent = d.nama + (d.namaSlide ? '  →  ' + d.namaSlide : '');
   $('ddSlide').innerHTML = slideHTML(rapi(d), '', '');
   $('ddData').innerHTML =
     '<dt>NIM</dt><dd>' + esc(d.nim) + '</dd>' +
@@ -634,7 +654,7 @@ async function bukaDetail(nim) {
   $('mdDetail').classList.remove('hidden');
   if (d.adaFoto) {
     var f = await ambilFoto(d.nim);
-    if (DETAIL === d && f) $('ddSlide').innerHTML = slideHTML(rapi(d), 'data:image/jpeg;base64,' + f, '');
+    if (DETAIL === d && f) { DETAIL_FOTO = 'data:image/jpeg;base64,' + f; $('ddSlide').innerHTML = slideHTML(rapi(d), DETAIL_FOTO, ''); }
   }
 }
 async function ubahStatus(status, btn) {
@@ -652,6 +672,40 @@ async function ubahStatus(status, btn) {
 }
 function confirmWA() { return window.confirm('Kirim catatan revisi ini lewat WhatsApp ke mahasiswa?'); }
 $('ddSetuju').onclick = function () { ubahStatus('Disetujui', this); };
+
+/* ---------- Edit data oleh admin ---------- */
+function dataEdit() {
+  return { namaSlide: $('edNama').value.trim(), tempat: $('edTempat').value.trim(), tgl: $('edTgl').value,
+           ayah: $('edAyah').value.trim(), ibu: $('edIbu').value.trim(), quote: $('edQuote').value.trim() };
+}
+function pratinjauEdit() {
+  var e = dataEdit(), d = DETAIL;
+  var x = { nama: e.namaSlide || d.nama, prodi: d.prodi, ipk: d.ipk, ayah: e.ayah, ibu: e.ibu, quote: e.quote,
+            ttl: e.tempat + (e.tgl ? ', ' + tglIndo(e.tgl) : '') };
+  $('ddSlide').innerHTML = slideHTML(rapi(x), DETAIL_FOTO, '');
+  $('edQuoteHit').textContent = $('edQuote').value.length + '/150';
+}
+$('ddEdit').onclick = function () {
+  var d = DETAIL;
+  $('edNama').value = d.namaSlide || d.nama; $('edTempat').value = d.tempat; $('edTgl').value = d.tgl;
+  $('edAyah').value = d.ayah; $('edIbu').value = d.ibu; $('edQuote').value = d.quote;
+  $('edPanel').classList.remove('hidden'); pratinjauEdit();
+  $('edPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+['edNama', 'edTempat', 'edTgl', 'edAyah', 'edIbu', 'edQuote'].forEach(function (id) { $(id).addEventListener('input', pratinjauEdit); });
+$('edBatal').onclick = function () { $('edPanel').classList.add('hidden'); $('ddSlide').innerHTML = slideHTML(rapi(DETAIL), DETAIL_FOTO, ''); };
+$('edSimpan').onclick = async function () {
+  var e = dataEdit();
+  if (!e.tempat || !e.tgl) return toast('Tempat dan tanggal lahir wajib diisi.');
+  var j = await api('editAdmin', Object.assign({ nim: DETAIL.nim }, e), this);
+  toast(j.pesan, 4000);
+  if (!j.ok) return;
+  var d = DETAIL;
+  d.namaSlide = e.namaSlide === d.nama ? '' : e.namaSlide; d.tempat = e.tempat; d.tgl = e.tgl;
+  d.ttl = e.tempat + ', ' + tglIndo(e.tgl); d.ayah = e.ayah; d.ibu = e.ibu; d.quote = e.quote;
+  if (d.status === 'Belum Mengisi') d.status = j.status || 'Draf';
+  $('edPanel').classList.add('hidden'); muatAdmUlang(); bukaDetail(d.nim);
+};
 $('ddRevisi').onclick = function () { ubahStatus('Perlu Revisi', this); };
 $('ddBuka').onclick = function () { ubahStatus('Dikirim', this); };
 
